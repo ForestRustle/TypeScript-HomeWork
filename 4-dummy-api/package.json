@@ -1,0 +1,22 @@
+{
+  "name": "4-dummy-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ForestRustle/TypeScript-HomeWork.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ForestRustle/TypeScript-HomeWork/issues"
+  },
+  "homepage": "https://github.com/ForestRustle/TypeScript-HomeWork#readme",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.9.0"
+  }
+}
