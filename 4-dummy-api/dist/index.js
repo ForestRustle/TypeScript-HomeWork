@@ -13,85 +13,84 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
+const URL = 'https://dummyjson.com/users';
+var Roles;
+(function (Roles) {
+    Roles["Admin"] = "admin";
+    Roles["Moderator"] = "moderator";
+    Roles["User"] = "user";
+})(Roles || (Roles = {}));
 var Gender;
 (function (Gender) {
     Gender["Male"] = "male";
     Gender["Female"] = "female";
 })(Gender || (Gender = {}));
-var Color;
-(function (Color) {
-    Color["Green"] = "Green";
-    Color["Brown"] = "Brown";
-    Color["Gray"] = "Gray";
-    Color["Amber"] = "Amber";
-    Color["Blue"] = "Blue";
-    Color["Black"] = "Black";
-    Color["Blond"] = "Blond";
-    Color["Chestnut"] = "Chestnut";
-    Color["Auburn"] = "Auburn";
-})(Color || (Color = {}));
 var HairType;
 (function (HairType) {
-    HairType["Strands"] = "Strands";
-    HairType["Curly"] = "Curly";
-    HairType["Very_curly"] = "Very curly";
-    HairType["Straight"] = "Straight";
-    HairType["Wavy"] = "Wavy";
+    HairType["curly"] = "Curly";
+    HairType["straight"] = "Straight";
+    HairType["wavy"] = "Wavy";
+    HairType["kinky"] = "Kinky";
 })(HairType || (HairType = {}));
-const url = 'https://dummyjson.com/users';
-function errorHandler(error) {
-    if (error instanceof Error) {
-        return error.message;
-    }
-    return 'this error not instanceof Error\nerror: ' + error;
-}
-function isSuccessResponse(res) {
-    if (res.status === 200) {
+var Color;
+(function (Color) {
+    Color["brown"] = "Brown";
+    Color["green"] = "Green";
+    Color["white"] = "White";
+    Color["blonde"] = "Blonde";
+    Color["gray"] = "Gray";
+    Color["red"] = "Red";
+    Color["purple"] = "Purple";
+    Color["blue"] = "Blue";
+    Color["black"] = "Black";
+})(Color || (Color = {}));
+function isSuccessResponse(responce) {
+    if (responce.status === 200) {
         return true;
     }
-    return false;
-}
-function getUsersFromData(res) {
-    if (isSuccessResponse(res)) {
-        assertUsers(res.data);
-        return res.data.users;
-    }
     else {
-        throw new Error(res.data.statusText);
+        return false;
     }
 }
-function assertUsers(data) {
-    if (typeof data === 'object' && !!data && 'users' in data) {
-        return;
+function handleApiResponse(responce) {
+    if (isSuccessResponse(responce)) {
+        return responce.data.users;
     }
-    throw new Error('users not found');
+    console.error(responce.status);
+    throw new Error(responce.data.statusText);
 }
-function getAddressFromUser(user) {
-    if (user.address) {
-        return user.address;
+function getUserFirstName(user) {
+    if (user.firstName) {
+        return user.firstName;
     }
-    throw new Error('address from user not found');
+    throw new Error('User company isn`t founded');
 }
-function requestToDummy() {
+function requestToAPI() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield (0, axios_1.default)(url);
-            const users = getUsersFromData(response);
-            return users;
+            const responce = yield axios_1.default.get(URL);
+            const allUsers = handleApiResponse(responce);
+            return allUsers;
         }
         catch (error) {
-            throw new Error(errorHandler(error));
+            console.error(error);
         }
     });
 }
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const users = yield requestToDummy();
-            console.log(users);
+        const users = yield requestToAPI();
+        if (!users) {
+            throw new Error('Users in request not founded');
         }
-        catch (error) {
-            console.log(errorHandler(error));
+        for (const user of users) {
+            try {
+                const firstName = getUserFirstName(user);
+                console.log(firstName);
+            }
+            catch (error) {
+                console.error(error);
+            }
         }
     });
 }

@@ -156,4 +156,19 @@ async function requestToAPI(): Promise<IUser[] | undefined> {
   }
 }
 
-requestToAPI();
+async function main() {
+  const users = await requestToAPI()
+  if (!users) {
+    throw new Error('Users in request not founded')
+  }
+  for (const user of users) {
+    try {
+      const firstName = getUserFirstName(user);
+      console.log(firstName);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+}
+
+main()
