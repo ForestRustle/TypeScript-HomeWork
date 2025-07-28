@@ -23,5 +23,5 @@ users = [
   },
 ];
 
-const res = users.sort(sortBy('id', 'age'))
+const res = users.sort(sortBy('name', 'age'))
 console.log(res);

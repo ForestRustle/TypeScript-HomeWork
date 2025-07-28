@@ -25,5 +25,5 @@ users = [
         email: { primary: 'bar@email.com' },
     },
 ];
-const res = users.sort((0, sort_by_1.default)('id', 'age'));
+const res = users.sort((0, sort_by_1.default)('name', 'age'));
 console.log(res);
