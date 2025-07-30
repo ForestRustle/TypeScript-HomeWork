@@ -15,8 +15,5 @@
     "url": "https://github.com/ForestRustle/TypeScript-HomeWork/issues"
   },
   "homepage": "https://github.com/ForestRustle/TypeScript-HomeWork#readme",
-  "description": "",
-  "dependencies": {
-    "axios": "^1.9.0"
-  }
+  "description": ""
 }
