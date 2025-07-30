@@ -72,6 +72,9 @@ class FetchBuilder {
     if (this.method != 'GET' && Object.keys(this.body).length> 0) {
       options.body = JSON.stringify(this.body)
     }
+    if (!this.head['Content-Type']) {
+      this.head['Content-Type'] = 'application/json';
+    }
     const responce = await fetch(this.url, options)
     const data = await responce.json();
     return data;
