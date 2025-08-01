@@ -81,19 +81,48 @@ class FetchBuilder {
   }
 }
 
-const fetchBuilder = new FetchBuilder();
-fetchBuilder
+class FetchProxy {
+  constructor(private builder: FetchBuilder) {}
+  addFetchMethod(method: keyof typeof FetchMethods) {
+    this.builder.addFetchMethod(method);
+    return this;
+  }
+
+  addHeadFetch(arrOrKey: any, value?: string) {
+    this.builder.addHeadFetch(arrOrKey as any, value as any)
+    return this;
+  }
+
+  addBodyFetch(arrOrKey: any,value?: any) {
+    this.builder.addBodyFetch(arrOrKey as any, value as any)
+    return this;
+  }
+
+  addURL(url: string): this {
+    this.builder.addURL(url)
+    return this;
+  }
+
+  async exec(): Promise<any> {
+    const result = await this.builder.exec()
+    return result;
+  }
+}
+
+const proxy = new FetchProxy(new FetchBuilder())
+
+proxy
   .addFetchMethod('GET')
   .addURL('https://dummyjson.com/users')
   .addHeadFetch({ 'Content-Type': 'application/json' })
   .exec()
   .then((data) => {
-    const {username, password} = data.users[0]
-    fetchBuilder
+    const { username, password } = data.users[0];
+    proxy
       .addURL('https://dummyjson.com/auth/login')
       .addBodyFetch({ username, password })
       .addFetchMethod('POST')
       .addHeadFetch('Content-Type', 'application/json')
       .exec()
-      .then(console.log)
-  })
+      .then(console.log);
+  });
