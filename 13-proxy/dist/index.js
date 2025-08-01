@@ -99,8 +99,18 @@ class FetchProxy {
     }
     exec() {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.builder.exec();
-            return result;
+            const startTTL = performance.now();
+            try {
+                const result = yield this.builder.exec();
+                const endTTL = performance.now();
+                console.log(`Время ответа ${endTTL - startTTL} ms`);
+                return result;
+            }
+            catch (error) {
+                const endTTL = performance.now();
+                console.error(`Время выполнения с ошибкой ${endTTL - startTTL} ms`);
+                throw error;
+            }
         });
     }
 }

@@ -104,8 +104,17 @@ class FetchProxy {
   }
 
   async exec(): Promise<any> {
-    const result = await this.builder.exec()
+    const startTTL = performance.now()
+    try {
+      const result = await this.builder.exec()
+      const endTTL = performance.now()
+      console.log(`Время ответа ${endTTL - startTTL} ms`);
     return result;
+    } catch (error) {
+      const endTTL = performance.now();
+      console.error(`Время выполнения с ошибкой ${endTTL - startTTL} ms`);
+      throw error;
+    } 
   }
 }
 
