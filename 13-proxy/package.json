@@ -1,9 +1,12 @@
 {
-  "name": "4-dummy-api",
+  "name": "13-proxy",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch":"tsc --watch",
+    "build": "tsc",
+    "start": "node ./dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -15,8 +18,5 @@
     "url": "https://github.com/ForestRustle/TypeScript-HomeWork/issues"
   },
   "homepage": "https://github.com/ForestRustle/TypeScript-HomeWork#readme",
-  "description": "",
-  "dependencies": {
-    "axios": "^1.9.0"
-  }
+  "description": ""
 }
