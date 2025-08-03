@@ -39,7 +39,9 @@ class FetchBuilder {
 
   addBodyFetch(body: Record<string, string>): FetchBuilder;
   addBodyFetch(key: string, value: string): FetchBuilder;
-  addBodyFetch(arrOrKey: Record<string, string> | string, value?: string
+  addBodyFetch(
+    arrOrKey: Record<string, string> | string,
+    value?: string
   ): FetchBuilder {
     if (typeof arrOrKey == 'string') {
       if (!value || arrOrKey.trim() == '' || value.trim() == '') {
@@ -55,27 +57,27 @@ class FetchBuilder {
     return this;
   }
 
-  addURL(url:string):FetchBuilder {
-    if (!url || url.trim()=='') {
+  addURL(url: string): FetchBuilder {
+    if (!url || url.trim() == '') {
       console.log('URL не может быть пустым. Введите URL');
-      return this
+      return this;
     }
-    this.url = url.trim()
-    return this
+    this.url = url.trim();
+    return this;
   }
 
   async exec(): Promise<any> {
-    const options:RequestInit = {
+    const options: RequestInit = {
       method: this.method,
       headers: this.head,
     };
-    if (this.method != 'GET' && Object.keys(this.body).length> 0) {
-      options.body = JSON.stringify(this.body)
+    if (this.method != 'GET' && Object.keys(this.body).length > 0) {
+      options.body = JSON.stringify(this.body);
     }
     if (!this.head['Content-Type']) {
       this.head['Content-Type'] = 'application/json';
     }
-    const responce = await fetch(this.url, options)
+    const responce = await fetch(this.url, options);
     const data = await responce.json();
     return data;
   }
@@ -89,49 +91,65 @@ class FetchProxy {
   }
 
   addHeadFetch(arrOrKey: any, value?: string) {
-    this.builder.addHeadFetch(arrOrKey as any, value as any)
+    this.builder.addHeadFetch(arrOrKey as any, value as any);
     return this;
   }
 
-  addBodyFetch(arrOrKey: any,value?: any) {
-    this.builder.addBodyFetch(arrOrKey as any, value as any)
+  addBodyFetch(arrOrKey: any, value?: any) {
+    this.builder.addBodyFetch(arrOrKey as any, value as any);
     return this;
   }
 
   addURL(url: string): this {
-    this.builder.addURL(url)
+    this.builder.addURL(url);
     return this;
   }
 
   async exec(): Promise<any> {
-    const startTTL = performance.now()
+    const startTTL = performance.now();
     try {
-      const result = await this.builder.exec()
-      const endTTL = performance.now()
+      const result = await this.builder.exec();
+      const endTTL = performance.now();
       console.log(`Время ответа ${endTTL - startTTL} ms`);
-    return result;
+      return result;
     } catch (error) {
       const endTTL = performance.now();
       console.error(`Время выполнения с ошибкой ${endTTL - startTTL} ms`);
       throw error;
-    } 
+    }
   }
 }
 
-const proxy = new FetchProxy(new FetchBuilder())
+interface IAPI {
+  requestToApi(id: number): Promise<Record<any, string>>;
+}
 
-proxy
-  .addFetchMethod('GET')
-  .addURL('https://dummyjson.com/users')
-  .addHeadFetch({ 'Content-Type': 'application/json' })
-  .exec()
-  .then((data) => {
-    const { username, password } = data.users[0];
-    proxy
-      .addURL('https://dummyjson.com/auth/login')
-      .addBodyFetch({ username, password })
-      .addFetchMethod('POST')
+class RequestToAPI implements IAPI {
+  private builder: FetchBuilder = new FetchBuilder();
+
+  async requestToApi(id: number): Promise<Record<any, string>> {
+    if (id >= 10) {
+      throw new Error('ID проудукта должен быть меньше 10');
+    }
+    const url = `https://dummyjson.com/products/${id}`;
+    const proxy = new FetchProxy(this.builder);
+
+    return proxy
+      .addFetchMethod('GET')
+      .addURL(url)
       .addHeadFetch('Content-Type', 'application/json')
-      .exec()
-      .then(console.log);
-  });
+      .exec();
+  }
+}
+
+const api = new RequestToAPI();
+
+api
+  .requestToApi(5)
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err));
+
+api
+  .requestToApi(15)
+  .then((data) => console.log(data))
+  .catch((err) => console.error(err));

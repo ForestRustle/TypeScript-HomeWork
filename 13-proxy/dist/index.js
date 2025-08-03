@@ -114,19 +114,31 @@ class FetchProxy {
         });
     }
 }
-const proxy = new FetchProxy(new FetchBuilder());
-proxy
-    .addFetchMethod('GET')
-    .addURL('https://dummyjson.com/users')
-    .addHeadFetch({ 'Content-Type': 'application/json' })
-    .exec()
-    .then((data) => {
-    const { username, password } = data.users[0];
-    proxy
-        .addURL('https://dummyjson.com/auth/login')
-        .addBodyFetch({ username, password })
-        .addFetchMethod('POST')
-        .addHeadFetch('Content-Type', 'application/json')
-        .exec()
-        .then(console.log);
-});
+class RequestToAPI {
+    constructor() {
+        this.builder = new FetchBuilder();
+    }
+    requestToApi(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (id >= 10) {
+                throw new Error('ID проудукта должен быть меньше 10');
+            }
+            const url = `https://dummyjson.com/products/${id}`;
+            const proxy = new FetchProxy(this.builder);
+            return proxy
+                .addFetchMethod('GET')
+                .addURL(url)
+                .addHeadFetch('Content-Type', 'application/json')
+                .exec();
+        });
+    }
+}
+const api = new RequestToAPI();
+api
+    .requestToApi(5)
+    .then((data) => console.log(data))
+    .catch((err) => console.error(err));
+api
+    .requestToApi(15)
+    .then((data) => console.log(data))
+    .catch((err) => console.error(err));
